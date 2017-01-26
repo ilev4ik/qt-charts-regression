@@ -1,4 +1,5 @@
 #include "chartview.h"
+#include <iostream>
 
 #include <QtCore/QtMath>
 #include <QtGui/QMouseEvent>
@@ -175,7 +176,6 @@ void ChartView::mousePressEvent(QMouseEvent *event) {
     if (m_isTouching) {
         return;
     }
-
     QChartView::mousePressEvent(event);
 }
 
@@ -183,7 +183,6 @@ void ChartView::mouseMoveEvent(QMouseEvent *event) {
     if (m_isTouching) {
         return;
     }
-
     QChartView::mouseMoveEvent(event);
 }
 
@@ -191,20 +190,20 @@ void ChartView::mouseReleaseEvent(QMouseEvent *event) {
     if (m_isTouching) {
         m_isTouching = false;
     }
-
     chart()->setAnimationOptions(QChart::SeriesAnimations);
     QChartView::mouseReleaseEvent(event);
 }
 
 bool CWorker::readFile(QString filename) {
-   QFile csvfile(QDir::currentPath() + "/job_test/" + filename);
-   if (!csvfile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-       return false;
-   }
 
-   dataMap = new QMap <qint16, QPointF>();
-   QTextStream in(&csvfile);
-   for (int i = 0; !csvfile.atEnd(); ++i) {
+    QFile csvfile(QDir().homePath() +"/" + filename);
+    if (!csvfile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+
+       return false;
+    }
+    dataMap = new QMap <qint16, QPointF>();
+    QTextStream in(&csvfile);
+    for (int i = 0; !csvfile.atEnd(); ++i) {
        QString raw_line = in.readLine();
        // not reading header info
        if (i != 0) {
@@ -214,9 +213,9 @@ bool CWorker::readFile(QString filename) {
            qreal y = line[1].toFloat(); // closeness
            dataMap->insert(id, QPointF(x, y));
        }
-   }
+    }
 
-   return true;
+    return true;
 }
 
 ChartView::COEF_TYPE CWorker::calculateLinearRegression() {
